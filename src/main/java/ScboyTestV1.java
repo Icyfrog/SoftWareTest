@@ -4,14 +4,15 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
-public class Demo {
-    public static void main(String[] args) throws IOException, InterruptedException {
 
+public class ScboyTestV1 {
+    public static void main(String[] args) throws IOException, InterruptedException {
 
         // Prepare information to visit web
         String loginUrl = "https://www.scboy.com/?user-login.htm";
@@ -19,7 +20,11 @@ public class Demo {
         String myPwd = "123456";
         String scboyHomeUrl = "https://www.scboy.com/";
         String kplxqUrl = "https://www.scboy.com/?forum-1.htm";
-        String searchUrl = "https://www.scboy.com/?search-_E6_8A_95_E7_A5_A8.htm";
+        String postUrl = "https://www.scboy.com/?thread-create-1.htm";
+        Integer OPTIONSNUM = 5;
+        Integer OPTIONCHOSEN = 3;
+        String TIMEDDL = "2020-08-01 13:09:38";
+
 
         System.setProperty("webdriver.chrome.driver", "/home/icyfrog/Downloads/chromedriver");
         WebDriver driver = new ChromeDriver();
@@ -62,6 +67,66 @@ public class Demo {
         else{
             System.out.println("[Success] navigation succeeded! Chrome is now viewing 科普鲁星区 part");
         }
+
+        // 接下来，按下“发新帖"按钮 准备发帖
+        WebElement postButton = driver.findElement(By.xpath("//*[@id=\"body\"]/div/div/div[2]/a"));
+        postButton.click();
+        webDriverWait = new WebDriverWait(driver,3);
+        webDriverWait.until(ExpectedConditions.titleIs("发帖"));
+        // 检查当前是否是发帖的界面
+        if(!driver.getCurrentUrl().equals(postUrl)) {
+            System.err.println("[Error] did not navigate page to https://www.scboy.com/?thread-create-1.htm!");
+            System.exit(-1);
+        }
+        else{
+            System.out.println("[Success] navigation succeeded! Chrome is now ready to post on scboy.com!");
+        }
+
+        // 发帖 填写下列表单：
+        // 论坛分区
+        Select forumSlect = new Select(driver.findElement(By.name("fid")));
+        // 4 是论坛功能分区
+        forumSlect.selectByValue("4");
+        // 标题输入
+        WebElement postTitleInput = driver.findElement(By.xpath("//*[@id=\"subject\"]"));
+        postTitleInput.sendKeys("发帖测试");
+        // 帖子类型设置：多选主题
+        WebElement postTypeInput = driver.findElement(By.xpath("//input[@value = 2]"));
+        postTypeInput.click();
+        // 投票标题: Vote test
+        WebElement voteTitleInput = driver.findElement(By.xpath("//*[@id='haya_poll_title']"));
+        voteTitleInput.sendKeys("Vote test");
+        // 投票选项: 增加五个选项
+        WebElement addOptionsButton = driver.findElement(By.xpath("//a[text()='新增选项']"));
+        for(int i=0; i<OPTIONSNUM-1; i++) {
+            addOptionsButton.click();
+        }
+        // 投票选项: 最多选三项
+        WebElement chosenOptionNum = driver.findElement(By.xpath("//*[@id='haya_poll_max_num']"));
+        chosenOptionNum.clear();
+        chosenOptionNum.sendKeys(String.valueOf(OPTIONCHOSEN));
+        // 投票选项: 定义每项
+        WebElement optionList = driver.findElement(By.xpath("//div[@class = 'haya-poll-options']"));
+        String front = "./div[";
+        String end = "]/div/input";
+        for(int i=1; i <= OPTIONSNUM; i++) {
+            String optionLocation = front + i + end;
+            WebElement option = optionList.findElement(By.xpath(optionLocation));
+            option.sendKeys("option test " + String.valueOf(i));
+        }
+        // 分类：论坛功能建议
+        WebElement postSubTypeInput = driver.findElement(By.xpath("//*[@id=\"nav_tag_list_div\"]/table/tbody/tr/td[2]/a[2]"));
+        postSubTypeInput.click();
+        // 投票结束时间：
+        WebElement timeDDLInput = driver.findElement(By.xpath("//*[@id='haya_poll_end_time']"));
+        timeDDLInput.clear();
+        timeDDLInput.sendKeys(TIMEDDL);
+
+
+
+
+
+        /*
         // 搜索帖子
         WebElement searchInput = driver.findElement(By.className("form-control"));
         searchInput.sendKeys("来投票你们想看的节目");
@@ -94,6 +159,6 @@ public class Demo {
         //WebElement voteButton2 = driver.findElement(By.xpath("//*[@id=\"body\"]/div/div/div/div[2]/div/div/div[2]/div/div/div[3]/div/label"));
         WebElement voteButton2 = driver.findElement(By.xpath("//span[text()='吃鸡']"));
         voteButton2.click();
-
+         */
     }
 }
