@@ -157,9 +157,9 @@ public class ScboyForumTest {
         JavascriptExecutor javascriptExecutor = (JavascriptExecutor) driver;
         javascriptExecutor.executeScript("document.body.innerHTML = '<p>"+postContentString+"</p>'");
         // 回到default页面 上传一张图片
-        driver.switchTo().defaultContent();
-        WebElement fileUploadIcon = driver.findElement(By.xpath("//*[@id=\"form\"]/div[10]/div[1]/a"));
-        fileUploadIcon.click();
+        //driver.switchTo().defaultContent();
+        //WebElement fileUploadIcon = driver.findElement(By.xpath("//*[@id=\"form\"]/div[10]/div[1]/a"));
+        //fileUploadIcon.click();
         // 这里可以修改一下 Thread.sleep显然不是很优雅
         Thread.sleep(1000);
         // 用一个robot模拟人的输入
@@ -177,7 +177,7 @@ public class ScboyForumTest {
             submitButton.click();
         }
         else {
-            driver.get("https://www.scboy.com/?forum-4.htm");
+            //driver.get("https://www.scboy.com/?forum-4.htm");
         }
         webDriverWait = new WebDriverWait(driver,3);
         webDriverWait.until(ExpectedConditions.titleIs(titleAfterSuccessPost));

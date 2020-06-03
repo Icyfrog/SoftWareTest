@@ -1,7 +1,6 @@
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
@@ -24,6 +23,8 @@ public class ScboyTestV1 {
         Integer OPTIONSNUM = 5;
         Integer OPTIONCHOSEN = 3;
         String TIMEDDL = "2020-08-01 13:09:38";
+        String SUPERLINK = "https://ow.blizzard.cn/home";
+        String SUPERLINKTITLE = "这个世界需要更多的英雄";
 
 
         System.setProperty("webdriver.chrome.driver", "/home/icyfrog/Downloads/chromedriver");
@@ -122,11 +123,52 @@ public class ScboyTestV1 {
         timeDDLInput.clear();
         timeDDLInput.sendKeys(TIMEDDL);
 
+        // 切换为iframe，填写document
+        WebElement ueditorIframe = driver.findElement(By.id("ueditor_0"));
+        driver.switchTo().frame(ueditorIframe);
+        driver.findElement(By.xpath("//body[@class='view']/p[1]")).sendKeys("来个超链接玩玩：\n");
+
+        // 切换回主文档
+        driver.switchTo().defaultContent();
+
+        // ​新建超链接
+        WebElement superLink = driver.findElement((By.xpath("//*[@id='edui95_body']")));
+        superLink.click();
+
+        // 切换为超链接的iframe, 用iframe填写超链接
+        WebElement superLinkIframe = driver.findElement(By.id("edui89_iframe"));
+        driver.switchTo().frame(superLinkIframe);
+        driver.findElement(By.id("text")).sendKeys(SUPERLINKTITLE);
+        driver.findElement(By.id("href")).sendKeys(SUPERLINK);
+        //driver.findElement(By.id("title")).sendKeys("title test");
+        driver.findElement(By.id("target")).click();
+
+        // 切换为主文档，点击确认
+        driver.switchTo().defaultContent();
+        driver.findElement(By.id("edui93_body")).click();
+
+        // 切换为iframe
+        driver.switchTo().frame(ueditorIframe);
+        driver.findElement(By.xpath("//body[@class='view']/p[2]")).sendKeys("\n");
+        driver.findElement(By.xpath("//body[@class='view']/p[3]")).sendKeys("来个锚点玩玩\n");
+
+        // 切换回主文档
+        driver.switchTo().defaultContent();
+
+        // 新建锚点，虽然我也不知道锚点有啥用
+        driver.findElement(By.id("edui101_body")).click();
+
+        // 切换为锚点的iframe
+        WebElement anchorIframe = driver.findElement(By.id("edui97_iframe"));
+        driver.switchTo().frame(anchorIframe);
+        driver.findElement(By.id("anchorName")).sendKeys("One anchor");
+
+        // 切换回主文档，点击确认
+        driver.switchTo().defaultContent();
+        driver.findElement(By.id("edui99_body")).click();
 
 
-
-
-        /*
+        /* 下面的是之前写的回答别人帖子，测试多选框的代码
         // 搜索帖子
         WebElement searchInput = driver.findElement(By.className("form-control"));
         searchInput.sendKeys("来投票你们想看的节目");
